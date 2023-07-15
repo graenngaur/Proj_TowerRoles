@@ -1,5 +1,7 @@
 ---
 - name: Puppet migration - Extra packages
+  debug:
+    msg: "Puppet migration - Extra packages"
 
 - include_vars: vars_packages.yml
 
