@@ -14,7 +14,7 @@
 
 - name: Add CyberArk group (Production)
   group:
-    name: CyberArk
+    name: "{{ CYBERARK_GROUP }}"
     gid: "{{ CYBERARK_GROUPID }}"
   when: is_production
   notify: stop_sssd
@@ -27,8 +27,7 @@
     password: "{{ CYBERARK_PASS }}"
     shell: /bin/bash
     uid: "{{ CYBERARK_USERID }}"
-    gid: "{{ CYBERARK_GROUPID }}"
-    manage_home: true
+    group: "{{ CYBERARK_GROUP }}"
   when: is_production
   notify: stop_sssd
 
