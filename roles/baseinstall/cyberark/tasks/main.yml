@@ -8,7 +8,7 @@
 - name: Check server environment
   set_fact:
     is_production: true
-  when: inventory_hostname[4:6] == 'lp'
+  when: inventory_hostname[4:6] != 'lp'
   changed_when: false
   failed_when: false
 
