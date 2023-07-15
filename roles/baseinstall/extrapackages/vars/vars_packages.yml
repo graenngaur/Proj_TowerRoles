@@ -1,0 +1,35 @@
+RHEL8_REPOSCOMMON: "*EPEL*,*suppl*"
+RHEL8_REPOSPPC: "*Power_Tools_8_ppc64le*,*Various_mloz*,*TSM_Client*"
+RHEL8_PPC: 
+  - DynamicRM
+  - mloz-storageutils
+  - TIVsm-BA
+  - rear
+  - nmon
+RHEL8_COMMON:
+  - htop
+  - net-tools
+  - nfs-utils
+  - autofs
+  - bind-utils
+  - cifs-utils
+  - iftop
+  - iotop
+  - lsof
+  - kpatch
+  - mlocate
+  - perl
+  - screen
+  - sg3_utils
+  - smem
+  - sos
+  - strace
+  - sysstat
+  - tree
+  - vim-enhanced
+  - bc
+  - dos2unix
+  - setools-console
+  - policycoreutils-python-utils
+  - bash-completion
+  - python36      
