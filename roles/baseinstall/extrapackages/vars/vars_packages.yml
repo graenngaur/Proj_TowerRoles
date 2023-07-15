@@ -7,7 +7,6 @@ RHEL8_PPC:
   - rear
   - nmon
 RHEL8_COMMON:
-  - htop
   - net-tools
   - nfs-utils
   - bash-completion
