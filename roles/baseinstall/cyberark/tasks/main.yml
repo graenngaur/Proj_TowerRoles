@@ -17,7 +17,7 @@
     name: CyberArk
     gid: "{{ CYBERARK_GROUPID }}"
   when: is_production
-  notify: Stop sssd
+  notify: stop_sssd
 
 - name: Add CyberArk user (Production)
   user:
@@ -30,14 +30,7 @@
     gid: "{{ CYBERARK_GROUPID }}"
     manage_home: true
   when: is_production
-  notify: Stop sssd
-
-- name: Stop sssd
-  command: "systemctl stop sssd && sss_cache -E"
-  when: is_production
-  register: sssd_stop_output
-  changed_when: sssd_stop_output.stdout.find('Stopping sssd') != -1
-  failed_when: false
+  notify: stop_sssd
 
 - name: Start sssd
   systemd:
