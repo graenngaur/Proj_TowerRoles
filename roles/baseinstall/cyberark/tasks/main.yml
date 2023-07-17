@@ -2,8 +2,7 @@
 - name: Puppet migration - CyberArk user/group part
   debug:
     msg: "Puppet migration - CyberArk user/group part"
-  tags: cyberark
-  
+
 - include_vars: vars.yml
 
 - name: Check server environment
