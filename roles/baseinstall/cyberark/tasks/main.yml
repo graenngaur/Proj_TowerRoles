@@ -11,6 +11,7 @@
   when: inventory_hostname[4:6] != 'lp'
   changed_when: false
   failed_when: false
+  tag: cyberark
 
 - name: Add CyberArk group (Production)
   group:
@@ -18,6 +19,7 @@
     gid: "{{ CYBERARK_GROUPID }}"
   when: is_production
   notify: stop_sssd
+  tag: cyberark
 
 - name: Add CyberArk user (Production)
   user:
@@ -30,6 +32,7 @@
     group: "{{ CYBERARK_GROUP }}"
   when: is_production
   notify: stop_sssd
+  tag: cyberark
 
 - name: Start sssd
   systemd:
@@ -40,4 +43,5 @@
     - started
     - reloaded
   changed_when: false
+  tag: cyberark
 
