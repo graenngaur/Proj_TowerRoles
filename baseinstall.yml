@@ -1,5 +1,5 @@
 ---
 - hosts: all
   roles:
-    - {role: baseinstall/extrapackages, tags: [ 'extrapackages','all' ]}
-    - {role: baseinstall/cyberark, tags: [ 'cyberark','all' ]}
+    - {role: baseinstall/extrapackages, tags: [ 'extrapackages' ]}
+    - {role: baseinstall/cyberark, tags: [ 'cyberark' ]}
