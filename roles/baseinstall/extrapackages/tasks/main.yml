@@ -1,6 +1,4 @@
 ---
-tags: extra
-
 - name: Puppet migration - Extra packages
   debug:
     msg: "Puppet migration - Extra packages"
