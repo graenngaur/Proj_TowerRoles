@@ -1,4 +1,6 @@
 ---
+tags: cyberark
+
 - name: Puppet migration - CyberArk user/group part
   debug:
     msg: "Puppet migration - CyberArk user/group part"
