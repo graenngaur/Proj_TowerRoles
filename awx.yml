@@ -1,0 +1,17 @@
+---
+# tasks file for teamcreation
+- name: Create new organization
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Create organization
+      awx.awx.organization:
+        name: "MutualitBAMDB"
+        description: "My new organization"
+        state: present
+      register: organization
+
+    - name: Print organization details
+      ansible.builtin.debug:
+        var: organization.result
