@@ -1,17 +1,76 @@
 ---
-# tasks file for teamcreation
-- name: Create new organization
-  hosts: localhost
-  gather_facts: false
+- hosts: localhost
+  vars:
+    team_roles:
+      - credential_admin
+      #- project_admin
+      - inventory_admin
+      - credential_admin
+      - notification_admin
+      - job_template_admin
+
 
   tasks:
-    - name: Create organization
-      awx.awx.organization:
-        name: "MutualitBAMDB"
-        description: "My new organization"
+    - name: Create a new token using username/password
+      awx.awx.token:
+        description: 'test'
+        scope: "write"
         state: present
-      register: organization
+        controller_host: http://rhel8tower.theesway.org/
+        controller_username: "claude"
+        controller_password: ""
+      no_log: true
 
-    - name: Print organization details
-      ansible.builtin.debug:
-        var: organization.result
+    - name: Create an organization
+      awx.awx.organization:
+        name: "MutualIT-TEST"
+        description: "TEST"
+        controller_oauthtoken: "{{ controller_token }}"
+        state: present
+        max_hosts: 0
+        galaxy_credentials:
+           - Ansible Galaxy
+      register: output
+
+    - name: Creation of team
+      awx.awx.team:
+        name: TEST_poweruser
+        description: team TEST_poweruser
+        controller_oauthtoken: "{{ controller_token }}"
+       # organization: "{{ output.name }}"
+        organization: "MutualIT-TEST"
+        state: present
+
+    - name: toekennen roles organization
+      awx.awx.role:
+        teams: TEST_poweruser
+        organizations: "MutualIT-TEST"
+        role: "{{ item }}"
+        state: present
+        controller_oauthtoken: "{{ controller_token }}"
+      loop: "{{ team_roles }}"
+
+
+    - name: add project to org
+      awx.awx.project:
+        name: testproject
+        scm_url: https://github.com/graenngaur/Proj_TowerRoles.git
+        credential: GITHUB_graenngaur
+        organization: "MutualIT-TEST"
+        #scm_update_on_launch: True
+        scm_type: git
+        state: present
+        controller_oauthtoken: "{{ controller_token }}"
+
+    - name: toekennen roles organization
+      awx.awx.role:
+        teams: TEST_poweruser
+        project: testproject
+        role: read
+        state: present
+        controller_oauthtoken: "{{ controller_token }}"
+
+
+    - name: Print the organization details
+      debug:
+        var: output.name
