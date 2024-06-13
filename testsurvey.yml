@@ -25,6 +25,7 @@
         name: "{{ job_template_name }}"
         survey_enabled: true
         project: "Proj_TowerRoles"
+        ask_inventory_on_launch: true
         survey_spec:
           name: "Application Deployment Survey"
           description: "Survey for application deployment"
