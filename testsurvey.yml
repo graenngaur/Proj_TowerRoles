@@ -1,0 +1,42 @@
+---
+- name: Create job template with survey
+  hosts: localhost
+  gather_facts: false
+  vars:
+    awx_url: "http://rhel8tower.theesway.org/"
+    awx_username: "claude"
+    awx_password: "N0aZ0eW!rld?"
+    job_template_name: "My Job Template"
+    survey_questions:
+      - question: "Enter the application version"
+        variable: "app_version"
+        type: "text"
+        required: true
+      - question: "Select the deployment environment"
+        variable: "app_environment"
+        type: "multiplechoice"
+        choices: ["dev", "staging", "prod"]
+        default: "dev"
+        required: true
+
+  tasks:
+    - name: Create job template
+      awx.awx.job_template:
+        name: "{{ job_template_name }}"
+        survey_enabled: true
+        survey_spec:
+          name: "Application Deployment Survey"
+          description: "Survey for application deployment"
+          spec:
+            - question_name: "{{ item.question }}"
+              question_description: "{{ item.question }}"
+              variable: "{{ item.variable }}"
+              type: "{{ item.type }}"
+              required: "{{ item.required }}"
+              choices: "{{ item.choices | default(omit) }}"
+              default: "{{ item.default | default(omit) }}"
+        controller_host: "{{ awx_url }}"
+        controller_username: "{{ awx_username }}"
+        controller_password: "{{ awx_password }}"
+        validate_certs: false
+      loop: "{{ survey_questions }}"
