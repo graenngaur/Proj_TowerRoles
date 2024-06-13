@@ -43,4 +43,4 @@
         controller_password: "{{ awx_password }}"
         validate_certs: false
       loop: "{{ survey_questions }}"
-playbook: "testsurvey.yml"
+
