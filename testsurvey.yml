@@ -24,6 +24,7 @@
       awx.awx.job_template:
         name: "{{ job_template_name }}"
         survey_enabled: true
+        project: "Proj_TowerRoles"
         survey_spec:
           name: "Application Deployment Survey"
           description: "Survey for application deployment"
