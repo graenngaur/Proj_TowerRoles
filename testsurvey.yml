@@ -26,6 +26,7 @@
         survey_enabled: true
         project: "Proj_TowerRoles"
         ask_inventory_on_launch: true
+        playbook: "testsurvey.yml"
         survey_spec:
           name: "Application Deployment Survey"
           description: "Survey for application deployment"
@@ -42,3 +43,4 @@
         controller_password: "{{ awx_password }}"
         validate_certs: false
       loop: "{{ survey_questions }}"
+playbook: "testsurvey.yml"
