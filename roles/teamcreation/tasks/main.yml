@@ -87,7 +87,7 @@
         
     - name: Filter cred_listfull based on names_to_filter
       set_fact:
-        filtered_cred_listfull: "{{ cred_listfull | selectattr('name', 'in', names_to_filter) | list }}"
+        filtered_cred_listfull: "{{ aap_main_credentials | selectattr('name', 'in', survey_credentials) | list }}"
 
     - name: copy credentials
       awx.awx.credential:

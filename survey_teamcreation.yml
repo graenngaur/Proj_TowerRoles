@@ -46,6 +46,8 @@
         playbook: "{{ aap_call_playbook }}"
         inventory: "{{ aap_main_inventory }}" 
         survey_enabled: true
+        extra_vars: 
+           aap_main_credentials: "{{ cred_listfull }}"
         survey_spec:
           name: "Application Deployment Survey"
           description: "Survey for application deployment"
