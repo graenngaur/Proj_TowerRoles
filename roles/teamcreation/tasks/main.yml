@@ -1,5 +1,8 @@
 ---
 # tasks file for teamcreation
+- name: Include vars of stuff.yaml into the 'stuff' variable (2.2).
+  ansible.builtin.include_vars:
+    file: vars/main.yml
 
 - name: Retrieving the MutualIT Ansible Controller token
   awx.awx.token:
