@@ -84,16 +84,21 @@
         controller_host: "{{ aap_controller}}"
         controller_username: "{{ aap_username }}"
         controller_password: "{{ aap_password}}"
+        
+    - name: Filter cred_listfull based on names_to_filter
+      set_fact:
+        filtered_cred_listfull: "{{ cred_listfull | selectattr('name', 'in', names_to_filter) | list }}"
 
     - name: copy credentials
       awx.awx.credential:
-        name: "{{ organization.name }}_{{ item }}"
-        copy_from: "{{ item }}"
+        name: "{{ organization.name }}_{{ item.name }}"
+        copy_from: "{{ item.name }}"
+        credential_type: "{{ item.kind }}"
         organization: "{{ organization.name }}"
         #controller_oauthtoken: "{{ controller_token.token }}"
         controller_host: "{{ aap_controller}}"
         controller_username: "{{ aap_username }}"
         controller_password: "{{ aap_password}}"
-      loop: "{{ survey_credentials }}"
+      loop: "{{ filtered_cred_listfull }}"
 
   when: organization.name is defined

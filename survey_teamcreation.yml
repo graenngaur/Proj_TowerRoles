@@ -27,7 +27,8 @@
     - name: Store the list of inventories in a variable
       set_fact:
         inventory_list: "{{ response.results[0].json | json_query('results[*].name') }}"
-        cred_list: "{{ response.results[1].json | json_query('results[*].name') }}"
+        cred_listfull: "{{ response.results[1].json | json_query('results[].{name: name, kind: kind}') }}"
+        #cred_list: "{{ response.results[1].json | json_query('results[*].name') }}"
 
     - name: Retrieving the MutualIT Ansible Controller token
       awx.awx.token:
@@ -71,8 +72,8 @@
               variable: "survey_credentials"
               type: "multiselect"
               required: true
-              choices: "{{ cred_list | default(omit) }}"
-              default: "{{ credentials | default(omit) }}"
+              choices: "{{ cred_listfull | map(attribute='name') | list | default(omit) }}"
+              #default: "{{ credentials | default(omit) }}"
         controller_host: "{{ aap_controller }}"
         controller_username: "{{ aap_username }}"
         controller_password: "{{ aap_password }}"
