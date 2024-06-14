@@ -1,0 +1,20 @@
+aap_company: "NoaZoeWorld"
+aap_organizationnew: "{{ survey_department }}"
+aap_controller: "http://rhel8tower.theesway.org/"
+aap_username: "claude"
+aap_password: "N0aZ0eW!rld?"
+aap_gitpassword: "GITHUB_graenngaur"
+aap_projectname: "{{ survey_project }}"
+aap_prject_add: true
+aap_inventoryname: "INV_VCenterDworp"
+aap_survey_inventories: "{{ survey_inventories }}"
+aap_survey_credentials: "{{ survey_credentials }}"
+aap_roles:
+  - {kind: 'org', team: 'poweruser', role: 'project_admin', org: '{{ organization.name }}'}
+  - {kind: 'org', team: 'poweruser', role: 'inventory_admin', org: '{{ organization.name }}'}
+  - {kind: 'org', team: 'poweruser', role: 'credential_admin', org: '{{ organization.name }}'}
+  - {kind: 'org', team: 'poweruser', role: 'workflow_admin', org: '{{ organization.name }}'}
+  - {kind: 'org', team: 'poweruser', role: 'job_template_admin', org: '{{ organization.name }}'}
+  - {kind: 'org', team: 'poweruser', role: 'notification_admin', org: '{{ organization.name }}'}
+  #- {kind: 'inventory', team: 'poweruser', role: 'use', inventoryname: '{{ aap_inventoryname }}', org: '{{ organization.name }}'}
+  #- {kind: 'project', team: 'normaluser', role: 'use', projectname: '{{ aap_projectname }}', org: '{{ organization.name }}'}
