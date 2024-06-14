@@ -1,9 +1,5 @@
 ---
 # tasks file for teamcreation
-- name: Include vars of stuff.yaml into the 'stuff' variable (2.2).
-  ansible.builtin.include_vars:
-    file: vars/main.yml
-
 - name: Retrieving the MutualIT Ansible Controller token
   awx.awx.token:
     description: "MutualIT AAP Token"
@@ -69,21 +65,31 @@
         controller_password: "{{ aap_password}}"
       when: aap_prject_add is true
 
-    - name: toekennen roles organization
+    - name: toekennen read role to project
       awx.awx.role:
         teams: "{{ organization.name }}_poweruser"
         project: "{{ aap_projectname }}"
-        role: read
+        role: use
         #controller_oauthtoken: "{{ controller_token.token }}"
         controller_host: "{{ aap_controller}}"
         controller_username: "{{ aap_username }}"
         controller_password: "{{ aap_password}}"
 
-    - name: Copy inventory to target organization
-      awx.awx.inventory:
-        copy_from: "INV_VCenterDworp"
-        name: "{{ organization.name }}_INV_VCenterDworp"
-        organization: "{{ organization.name }}"
+    - name: toekennen use roles inventories
+      awx.awx.role:
+        teams: "{{ organization.name }}_poweruser"
+        inventories: "{{ survey_inventories }}"
+        role: use
+        #controller_oauthtoken: "{{ controller_token.token }}"
+        controller_host: "{{ aap_controller}}"
+        controller_username: "{{ aap_username }}"
+        controller_password: "{{ aap_password}}"
+
+    - name: toekennen use roles credentials
+      awx.awx.role:
+        teams: "{{ organization.name }}_poweruser"
+        credentials: "{{ survey_credentials }}"
+        role: use
         #controller_oauthtoken: "{{ controller_token.token }}"
         controller_host: "{{ aap_controller}}"
         controller_username: "{{ aap_username }}"
