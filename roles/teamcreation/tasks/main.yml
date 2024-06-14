@@ -16,7 +16,10 @@
   awx.awx.organization:
     name: "{{ aap_company }}_{{ aap_organizationnew }}"
     description: "Mutualit departement"
-    controller_oauthtoken: "{{ controller_token.token }}"
+    #controller_oauthtoken: "{{ controller_token.token }}"
+    controller_host: "{{ aap_controller}}"
+    controller_username: "{{ aap_username }}"
+    controller_password: "{{ aap_password}}"
     state: present
     max_hosts: 0
     galaxy_credentials:
@@ -29,7 +32,10 @@
       awx.awx.team:
         name: "{{ organization.name }}_{{ item }}"
         description: "Mutualit team {{ item }}"
-        controller_oauthtoken: "{{ controller_token.token }}"
+        #controller_oauthtoken: "{{ controller_token.token }}"
+        controller_host: "{{ aap_controller}}"
+        controller_username: "{{ aap_username }}"
+        controller_password: "{{ aap_password}}"
         organization: "{{ organization.name }}"
         state: present
       loop: "{{ aap_roles | map(attribute='team') | unique }}"
@@ -40,7 +46,10 @@
         organization: "{{ item.org }}"
         role: "{{ item.role }}"
         state: present
-        controller_oauthtoken: "{{ controller_token }}"
+        #controller_oauthtoken: "{{ controller_token.token }}"
+        controller_host: "{{ aap_controller}}"
+        controller_username: "{{ aap_username }}"
+        controller_password: "{{ aap_password}}"
       loop: "{{ aap_roles | selectattr('team', 'eq', 'poweruser') | selectattr('kind', 'eq', 'org') | list }}"
 
     - name: add project to org
@@ -51,7 +60,10 @@
         organization: "{{ organization.name }}"
         scm_update_on_launch: false
         scm_type: git
-        controller_oauthtoken: "{{ controller_token }}"
+        #controller_oauthtoken: "{{ controller_token.token }}"
+        controller_host: "{{ aap_controller}}"
+        controller_username: "{{ aap_username }}"
+        controller_password: "{{ aap_password}}"
       when: aap_prject_add is true
 
     - name: toekennen roles organization
@@ -59,13 +71,19 @@
         teams: "{{ organization.name }}_poweruser"
         project: "{{ aap_projectname }}"
         role: read
-        controller_oauthtoken: "{{ controller_token }}"
+        #controller_oauthtoken: "{{ controller_token.token }}"
+        controller_host: "{{ aap_controller}}"
+        controller_username: "{{ aap_username }}"
+        controller_password: "{{ aap_password}}"
 
     - name: Copy inventory to target organization
       awx.awx.inventory:
         copy_from: "INV_VCenterDworp"
         name: "{{ organization.name }}_INV_VCenterDworp"
         organization: "{{ organization.name }}"
-        controller_oauthtoken: "{{ controller_token }}"
+        #controller_oauthtoken: "{{ controller_token.token }}"
+        controller_host: "{{ aap_controller}}"
+        controller_username: "{{ aap_username }}"
+        controller_password: "{{ aap_password}}"
 
   when: organization.name is defined
