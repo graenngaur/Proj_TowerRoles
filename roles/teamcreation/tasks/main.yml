@@ -85,14 +85,15 @@
         controller_username: "{{ aap_username }}"
         controller_password: "{{ aap_password}}"
 
-    - name: toekennen use roles credentials
-      awx.awx.role:
-        teams: "{{ organization.name }}_poweruser"
-        credentials: "{{ survey_credentials }}"
-        role: use
+    - name: copy credentials
+      awx.awx.credential:
+        name: "{{ organization.name }}_{{ item }}"
+        copy_from: "{{ item }}"
+        organization: "{{ organization.name }}"
         #controller_oauthtoken: "{{ controller_token.token }}"
         controller_host: "{{ aap_controller}}"
         controller_username: "{{ aap_username }}"
         controller_password: "{{ aap_password}}"
+      loop: "{{ survey_credentials }}"
 
   when: organization.name is defined
