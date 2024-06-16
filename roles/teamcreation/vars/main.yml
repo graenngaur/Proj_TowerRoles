@@ -2,10 +2,10 @@ aap_company: "NoaZoeWorld"
 aap_organizationnew: "{{ survey_department }}"
 aap_controller: "http://rhel8tower.theesway.org/"
 aap_username: "claude"
-aap_password: "N0aZ0eW!rld?"
+aap_password: "kjgit!(!è!(!ç"
 aap_gitpassword: "GITHUB_graenngaur"
 aap_projectname: "{{ survey_project }}"
-aap_prject_add: true
+aap_project_add: true
 aap_inventoryname: "INV_VCenterDworp"
 aap_survey_inventories: "{{ survey_inventories }}"
 aap_survey_credentials: "{{ survey_credentials }}"
