@@ -91,8 +91,8 @@
 
     - name: copy credentials
       awx.awx.credential:
-        name: "{{ organization.name }}_{{ item.name }}"
-        copy_from: "{{ item.name }}"
+        name: "{{ item.name }}"
+        new.name: "{{ organization.name }}_{{ item.name }}"
         credential_type: "{{ item.kind }}"
         organization: "{{ organization.name }}"
         #controller_oauthtoken: "{{ controller_token.token }}"

@@ -27,8 +27,7 @@
     - name: Store the list of inventories in a variable
       set_fact:
         inventory_list: "{{ response.results[0].json | json_query('results[*].name') }}"
-        cred_listfull: "{{ response.results[1].json | json_query('results[].{name: name, kind: kind}') }}"
-        #cred_list: "{{ response.results[1].json | json_query('results[*].name') }}"
+        cred_listfull: "{{ response.results[1].json | json_query('results[].{name: name, kind: credential_type}') }}"
 
     - name: Retrieving the MutualIT Ansible Controller token
       awx.awx.token:
