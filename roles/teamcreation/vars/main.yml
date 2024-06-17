@@ -14,5 +14,4 @@ aap_roles:
   - {kind: 'org', team: 'poweruser', role: 'workflow_admin', org: '{{ organization.name }}'}
   - {kind: 'org', team: 'poweruser', role: 'job_template_admin', org: '{{ organization.name }}'}
   - {kind: 'org', team: 'poweruser', role: 'notification_admin', org: '{{ organization.name }}'}
-  #- {kind: 'inventory', team: 'poweruser', role: 'use', inventoryname: '{{ aap_inventoryname }}', org: '{{ organization.name }}'}
-  #- {kind: 'project', team: 'normaluser', role: 'use', projectname: '{{ aap_projectname }}', org: '{{ organization.name }}'}
+  - {kind: 'project', team: 'normaluser', role: 'use', projectname: '{{ aap_projectname }}', org: '{{ organization.name }}'}
