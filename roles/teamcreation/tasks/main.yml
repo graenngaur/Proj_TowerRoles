@@ -1,15 +1,14 @@
 ---
-# tasks file for teamcreation
-- name: Retrieving the MutualIT Ansible Controller token
-  awx.awx.token:
-    description: "MutualIT AAP Token"
-    scope: "write"
-    state: present
-    controller_host: "{{ aap_controller}}"
-    controller_username: "{{ aap_username }}"
-    controller_password: "{{ aap_password}}"
-  #no_log: true
-
+# # tasks file for teamcreation
+# - name: Retrieving the MutualIT Ansible Controller token
+#   awx.awx.token:
+#     description: "MutualIT AAP Token"
+#     scope: "write"
+#     state: present
+#     controller_host: "{{ aap_controller}}"
+#     controller_username: "{{ aap_username }}"
+#     controller_password: "{{ aap_password}}"
+#   #no_log: true
 
 - name: Creation of the organization {{ aap_company }}_{{ aap_organizationnew }}
   awx.awx.organization:
@@ -51,29 +50,31 @@
         controller_password: "{{ aap_password}}"
       loop: "{{ aap_roles | selectattr('team', 'eq', 'poweruser') | selectattr('kind', 'eq', 'org') | list }}"
 
-    - name: add project to org
-      awx.awx.project:
-        name: "{{ aap_projectname }}"
-        scm_url: https://github.com/graenngaur/Proj_TowerRoles.git
-        credential: "{{ aap_gitpassword}}"
-        organization: "{{ organization.name }}"
-        scm_update_on_launch: false
-        scm_type: git
-        #controller_oauthtoken: "{{ controller_token.token }}"
-        controller_host: "{{ aap_controller}}"
-        controller_username: "{{ aap_username }}"
-        controller_password: "{{ aap_password}}"
-      when: aap_prject_add is true
-
-    - name: toekennen read role to project
-      awx.awx.role:
-        teams: "{{ organization.name }}_poweruser"
-        project: "{{ aap_projectname }}"
-        role: use
-        #controller_oauthtoken: "{{ controller_token.token }}"
-        controller_host: "{{ aap_controller}}"
-        controller_username: "{{ aap_username }}"
-        controller_password: "{{ aap_password}}"
+    - name: adding the project to the organization if
+      block:
+        - name: add project to org
+          awx.awx.project:
+            name: "{{ aap_projectname }}"
+            scm_url: https://github.com/graenngaur/Proj_TowerRoles.git
+            credential: "{{ aap_gitpassword}}"
+            organization: "{{ organization.name }}"
+            scm_update_on_launch: false
+            scm_type: git
+            #controller_oauthtoken: "{{ controller_token.token }}"
+            controller_host: "{{ aap_controller}}"
+            controller_username: "{{ aap_username }}"
+            controller_password: "{{ aap_password}}"
+          
+        - name: toekennen read role to project
+          awx.awx.role:
+            teams: "{{ organization.name }}_poweruser"
+            project: "{{ aap_projectname }}"
+            role: use
+            #controller_oauthtoken: "{{ controller_token.token }}"
+            controller_host: "{{ aap_controller}}"
+            controller_username: "{{ aap_username }}"
+            controller_password: "{{ aap_password}}"
+      when: aap_projectname is defined
 
     - name: toekennen use roles inventories
       awx.awx.role:
