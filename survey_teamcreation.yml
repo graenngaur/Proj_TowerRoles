@@ -2,7 +2,7 @@
   gather_facts: false
   vars:
     ansible_controller_host: "rhel8tower.theesway.org"
-    ansible_controller_token: "bfI48EBFvdnWqqx8ztbvWX0rtn8UbT"
+    ansible_controller_token: "fllTv3C8CwLG1KXwKSuePKwNTWyOqA"
     aap_controller: "http://rhel8tower.theesway.org/"
     aap_username: "claude"
     aap_password: "N0aZ0eW!rld?"
