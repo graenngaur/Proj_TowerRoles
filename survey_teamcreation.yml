@@ -5,7 +5,7 @@
     ansible_controller_token: "bfI48EBFvdnWqqx8ztbvWX0rtn8UbT"
     aap_controller: "http://rhel8tower.theesway.org/"
     aap_username: "claude"
-    aap_password: "§èggftsjjj"
+    aap_password: "N0aZ0eW!rld?"
     aap_main_project: "Proj_TowerRoles"
     aap_call_playbook: "teamcreation.yml"
     aap_template_name: "SurveyCreation"
