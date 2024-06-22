@@ -2,6 +2,6 @@
 devops_baseurl: "https://dev.azure.com/MutualIt/999-hybridinfra-autodeploylinux/_apis/pipelines/"
 devops_apiversion: 6.0
 devops_pipeline: 920
-devops_user: "M999CEN@MUTWORLD.BE"
-devops_token: "it5wvy6poexhsogf7og4rqzq2gyinxcuhqhudo6xj3qoopnymqxa"
+devops_user: ""
+devops_token: ""
 branch_name: "refs/heads/main"
