@@ -1,0 +1,42 @@
+---
+- hosts: localhost
+  vars:
+    devops_baseurl: "https://dev.azure.com/MutualIt/999-hybridinfra-autodeploylinux/_apis/pipelines/"
+    devops_apiversion: 6.0
+    devops_pipeline: 920
+    devops_user: "M999CEN@MUTWORLD.BE"
+    devops_token: "it5wvy6poexhsogf7og4rqzq2gyinxcuhqhudo6xj3qoopnymqxa"
+    branch_name: "refs/heads/main"
+
+  tasks:
+    - name: Activatie van Azure DevOps Pipeline
+      ansible.builtin.uri:
+        url: "{{ devops_baseurl }}{{ devops_pipeline }}/runs?api-version={{ devops_apiversion }}"
+        method: POST
+        user: "{{ devops_user }}"
+        password: "{{ devops_token }}"
+        body:
+          sourceBranch: "{{ branch_name }}"
+          variables:
+            hostApp:
+              isSecret: false
+              value: "World"
+            hostEnv:
+              isSecret: false
+              value: "space"
+            vm_name:
+              isSecret: false
+              value: "lio"
+            vm_size:
+              isSecret: false
+              value: "big"
+        body_format: json
+        force_basic_auth: yes
+        status_code: 200
+      register: pipeline_status
+
+    - name: Output de pipeline status
+      debug:
+        msg: "{{ pipeline_status.json }}"
+
+
