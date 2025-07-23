@@ -1,6 +1,6 @@
 vcenter_hostname: "vcenter8.theesway.org"
 vcenter_username: "administrator@vsphere.local"
-vcenter_password: "N0aZ0eW!rld?"
+vcenter_password: "password"
 vcenter_datacenter: "NoaZoeWorld"
 vcenter_cluster: "lioworld"
 vcenter_vmfolder: "/"
