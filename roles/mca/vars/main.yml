@@ -1,0 +1,24 @@
+---
+owner: root
+group: root
+app_user: tomcat
+app_group: tomcat
+base_dir: /data
+tomcat_dir: /opt/tomcat
+
+folders:
+  - { name: "tomcat", basepath: "{{ tomcat_dir }}", subdir: "", owner_info: "{{ app_user }}", group_info: "{{ app_group }}", mode_info: "0775" }
+  - { name: "conf", basepath: "{{ base_dir }}", subdir: "{{ instance_name }}/conf", owner_info: "{{ app_user }}", group_info: "{{ app_group }}", mode_info: "0755" }
+  - { name: "logs", basepath: "{{ base_dir }}", subdir: "{{ instance_name }}/logs", owner_info: "{{ app_user }}", group_info: "{{ app_group }}", mode_info: "0755" }
+  - { name: "webapps", basepath: "{{ base_dir }}", subdir: "{{ instance_name }}/webapps", owner_info: "{{ app_user }}", group_info: "{{ app_group }}", mode_info: "0755" } 
+  - { name: "temp", basepath: "{{ base_dir }}", subdir: "{{ instance_name }}/temp", owner_info: "{{ app_user }}", group_info: "{{ app_group }}", mode_info: "0755" }
+  - { name: "work", basepath: "{{ base_dir }}", subdir: "{{ instance_name }}/work", owner_info: "{{ app_user }}", group_info: "{{ app_group }}", mode_info: "0755" }
+  - { name: "bin", basepath: "{{ base_dir }}", subdir: "{{ instance_name }}/bin", owner_info: "{{ app_user }}", group_info: "{{ app_group }}", mode_info: "0755" }
+
+copyfiles:
+  - { path_src: "lib/", path_dest: "{{ tomcat_dir }}/lib", path_filter: "*", owner_info: "{{ app_user }}", group_info: "{{ app_group }}", mode_info: "0644" }  
+  - { path_src: "{{ envinfo }}/{{ mutinfo }}/jks/", path_dest: "{{ tomcat_dir }}/conf/",  path_filter: "*.jks",owner_info: "{{ app_user }}", group_info: "{{ app_group }}", mode_info: "0644" }
+  - { path_src: "{{ envinfo }}/{{ mutinfo }}/{{ instance_name }}/bin/", path_dest: "{{ tomcat_dir }}/{{ instance_name }}/bin/", path_filter: "*", owner_info: "{{ app_user }}", group_info: "{{ app_group }}", mode_info: "0644" }
+  - { path_src: "{{ envinfo }}/{{ mutinfo }}/{{ instance_name }}/conf/",path_dest: "{{ tomcat_dir }}/{{ instance_name }}/conf/", path_filter: "*", owner_info: "{{ app_user }}", group_info: "{{ app_group }}", mode_info: "0644" }
+  - { path_src: "systemd/", path_dest: "/etc/systemd/system/", path_filter: "*{{ instance_name | upper }}*", owner_info: "{{ app_user }}", group_info: "{{ app_group }}", mode_info: "0644" }
+  - { path_src: "logrotate/", path_dest: "/etc/logrotate/", path_filter: "*{{ instance_name | upper }}*", owner_info: "{{ app_user }}", group_info: "{{ app_group }}", mode_info: "0644" }

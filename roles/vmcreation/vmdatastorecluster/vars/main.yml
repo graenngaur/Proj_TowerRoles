@@ -1,0 +1,21 @@
+vcenter_hostname: "vcenter8.theesway.org"
+vcenter_username: "administrator@vsphere.local"
+vcenter_password: "N0aZ0eW!rld?"
+vcenter_datacenter: "NoaZoeWorld"
+vcenter_cluster: "lioworld"
+vcenter_vmfolder: "/"
+vcenter_template: "Template-RHEL9ANS"
+vcenter_guestid: "rhel9_64Guest"
+vcenter_datacluster: "DatastoreCluster"
+
+vm_name: "rhel9claude-dsc.theesway.org"
+vm_disksize: 60
+vm_disk2_size: 0
+vm_memory: 6000
+vm_cpus: 2
+vm_ip: "192.168.0.169"
+vm_gateway: "192.168.0.1"
+vm_netmask: "255.255.255.0"
+vm_domain: "theesway.org"
+vm_dns_servers: ["192.168.0.107", "8.8.4.4"]
+vm_network_name: "VM Network"

@@ -1,0 +1,22 @@
+---
+- name: Deploy Tomcat MCA Instances
+  hosts: localhost
+  become: true
+  gather_facts: false
+
+  vars:
+    instances:
+      - mca01
+      - mca02
+    mutinfo: 5xx
+    envinfo: integ
+
+  tasks:
+    - name: Create MCA instances
+      ansible.builtin.include_role:
+        name: systems/mca
+      loop: "{{ instances }}"
+      loop_control:
+        loop_var: instance_name
+
+        

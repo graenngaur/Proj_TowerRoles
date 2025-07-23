@@ -1,0 +1,27 @@
+# Systemd unit file for tomcat
+[Unit]
+Description=Apache Tomcat Web Application Container
+After=syslog.target network.target
+
+[Service]
+Type=forking
+
+Environment=JRE_HOME=/usr/lib/jvm/jre
+Environment=CATALINA_PID=/opt/tomcat/MCA01/tomcatMCA01.pid
+Environment=CATALINA_HOME=/opt/tomcat/
+Environment=CATALINA_BASE=/opt/tomcat/MCA01
+
+ExecStart=/opt/tomcat/MCA01/bin/startup.sh
+ExecStop=/bin/kill -15 $MAINPID
+
+User=tomcat
+Group=tomcat
+
+LimitAS=infinity
+LimitRSS=infinity
+LimitCORE=infinity
+LimitNOFILE=infinity
+
+[Install]
+WantedBy=multi-user.target
+

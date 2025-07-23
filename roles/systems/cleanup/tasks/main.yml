@@ -1,0 +1,56 @@
+---
+- name: Check if target path exists
+  ansible.builtin.stat:
+    path: "{{ searchinfos.cleanup_searchpath }}"
+  register: path_check
+
+- name: Start cleanup
+  block:
+    # - name: Find files that were created at least {{ exists_since_yesterday }} day before
+    #   ansible.builtin.find:
+    #     paths: "{{ cleanup_searchpath }}"
+    #     age: "{{ exists_since_yesterday }}"
+    #     recurse: yes
+    #     exclude: '.*'
+    #   register: found_listresult
+
+    # - name: Change ownerchip to root and make readable by everyone
+    #   ansible.builtin.file:
+    #     path: "{{ item.path }}"
+    #     owner: 'root'
+    #     group: 'root'
+    #     mode: '0775'
+    #   with_items: "{{ found_listresult.files }}"
+
+    - name: Find files older than {{ item.search_days }} days
+      ansible.builtin.find:
+        paths: "{{ searchinfos.cleanup_searchpath }}"
+        age: "{{ searchinfos.search_days }}"
+        file_type: "{{ searchinfos.search_type }}"
+        recurse: "{{ searchinfos.search_recursive }}"
+        patterns: "{{ searchinfos.search_pattern }}"
+        hidden: "{{ searchinfos.search_hidden }}"
+        excludes: "{{ searchinfos.search_exclude }}"
+      register: found_oldresult
+
+    - name: Delete files/directorys older than {{ item.search_days }} days
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ found_oldresult.files }}"
+      when: found_oldresult.files | length > 0
+
+    - name: Output delete files/directorys
+      ansible.builtin.pause:
+        seconds: 1
+        prompt: |
+          ========================================================================
+          Files/directorys found older than {{ searchinfos.search_days }} days:
+
+          {% for file in found_oldresult.files %}
+              --> {% if file.isdir %}DIR:{% else %}FILE:{% endif %} {{ file.path }}
+          {% endfor %}
+
+          ========================================================================
+
+  when: path_check.stat.exists

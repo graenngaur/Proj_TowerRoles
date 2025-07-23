@@ -1,0 +1,14 @@
+---
+- hosts: localhost
+  gather_facts: false
+  vars:
+    cleanloctions:
+      - { cleanup_searchpath : "/import/headdump", search_days: "120d", search_hidden: false, search_pattern: "*", search_exclude: "", search_type: "any", search_recursive: true }
+
+  tasks:
+    - name: Cleanup starting
+      ansible.builtin.include_role:
+        name: systems/cleanup
+      loop: "{{ cleanloctions }}"
+      loop_control:
+        loop_var: searchinfos

@@ -1,0 +1,81 @@
+---
+- name: Creatie van de datstore lijst
+  community.vmware.vmware_datastore_info:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    datacenter: "{{ vcenter_datacenter }}"
+    #cluster: "{{ vcenter_cluster }}"
+    validate_certs: false
+    show_tag: true
+  register: datastore_info
+ 
+- name: Opzoeken van de datastore met meeste vrije ruimte binnen een specifieke datastore cluster
+  ansible.builtin.set_fact:
+    target_datastore: "{{ (datastore_info.datastores | selectattr('datastore_cluster', 'eq', vcenter_datacluster) | sort(attribute='freeSpace', reverse=true) | first) }}"
+
+- name: Info output van de gevonden datastore
+  ansible.builtin.debug:
+      msg: |
+        Selected datastore: {{ target_datastore.name }}
+        Datastore Cluster: {{ target_datastore.datastore_cluster | default('N/A') }}
+        Free space: {{ (target_datastore.freeSpace / 1024 / 1024 / 1024) | round(2) }} GB
+        Total capacity: {{ (target_datastore.capacity / 1024 / 1024 / 1024) | round(2) }} GB
+        Free space percentage: {{ ((target_datastore.freeSpace / target_datastore.capacity) * 100) | round(2) }}%
+    
+
+- name: Creatie of VM {{ vm_name }}
+  community.vmware.vmware_guest:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    datacenter: "{{ vcenter_datacenter }}" 
+    cluster: "{{ vcenter_cluster }}" 
+    name: "{{ vm_name }}"
+    folder: "{{ vcenter_vmfolder }}" 
+    template: "{{ vcenter_template }}"  
+    state: poweredon
+    guest_id: "{{ vcenter_guestid }}" 
+    disk: >-
+      {{
+        [
+          {
+           'size_gb': vm_disksize,
+            'type': 'thin',
+            'datastore': target_datastore.name 
+          }
+        ] +
+        (
+          [
+            {
+              'size_gb': vm_disk2_size,
+              'type': 'thin',
+              'datastore': target_datastore.name 
+            }
+          ] if vm_disk2_size > 0 else []
+        )
+      }}
+    hardware:
+      memory_mb: "{{ vm_memory }}"  
+      num_cpus: "{{ vm_cpus }}"
+    networks:
+      - name: "{{ vm_network_name }}"
+        ip: "{{ vm_ip }}"
+        netmask: "{{ vm_netmask }}"
+        gateway: "{{ vm_gateway }}"
+    customization:
+      dns_servers: "{{ vm_dns_servers }}"
+      domain: "{{ vm_domain }}"
+      hostname: "{{ vm_name }}" 
+    wait_for_ip_address: true
+    wait_for_customization: true
+    validate_certs: false
+  register: vmware_guest_result
+
+- name: Contrleer of VM is running 
+  ansible.builtin.wait_for:
+    host: "{{ vm_ip }}"
+    port: 22
+    timeout: 300 
+    state: started
+  delegate_to: localhost

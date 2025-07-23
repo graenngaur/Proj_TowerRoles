@@ -1,6 +1,0 @@
-- name: stop_sssd
-  command: "systemctl stop sssd && sss_cache -E"
-  when: is_production
-  register: sssd_stop_output
-  changed_when: sssd_stop_output.stdout.find('Stopping sssd') != -1
-  failed_when: false

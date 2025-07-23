@@ -1,0 +1,48 @@
+---
+- name: Starting creation of Tomcat directories
+  block:
+  - name: Create Tomcat instance directories on instance {{ instance_name }}
+    ansible.builtin.file:
+      path: "{{ item.basepath }}/{{ item.subdir | default('') }}"
+      state: directory
+      owner: "{{ item.owner_info }}"
+      group: "{{ item.group_info }}"
+      mode: "{{ item.mode_info }}"
+    loop: "{{ folders }}"
+  
+  - name: Create symlink for tomcat on instance {{ instance_name }}
+    ansible.builtin.file:
+      src: "{{ base_dir }}/{{ instance_name }}"
+      dest: "{{ tomcat_dir }}/{{ instance_name }}"
+      state: link
+      owner: "{{ owner }}"
+      group: "{{ group }}"
+
+- name: Starting copy files to instance {{ instance_name }}
+  block:
+  - name: Empty file_list var 
+    # Anders zal de laatste instance ook de andere elementen verwerken
+    ansible.builtin.set_fact:
+      file_list: []
+
+  - name: Build structured file list from copyfiles
+    ansible.builtin.set_fact:
+      file_list: "{{ file_list + (matched_files | map('community.general.dict_kv', 'src') | map('combine', {
+              'dest': item.path_dest,
+              'owner': item.owner_info,
+              'group': item.group_info,
+              'mode': item.mode_info
+            }) | list) }}"
+    loop: "{{ copyfiles }}"
+    vars:
+      matched_files: "{{ lookup('fileglob', item.path_src + item.path_filter, wantlist=True) }}"
+
+  - name: Copy files to destination
+    ansible.builtin.copy:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}/{{ item.src | basename }}"
+      owner: "{{ item.owner }}"
+      group: "{{ item.group }}"
+      mode: "{{ item.mode }}"
+    loop: "{{ file_list }}"
+    when: item.src is file
