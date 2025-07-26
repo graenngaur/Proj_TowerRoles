@@ -1,0 +1,10 @@
+---
+- name: Deploy Tomcat MCA Instances
+  hosts: localhost
+  become: true
+  gather_facts: false
+
+  roles:
+    - vmcreation/vmdatastoreclusteronly
+
+        

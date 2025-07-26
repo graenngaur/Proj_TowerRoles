@@ -1,0 +1,51 @@
+---
+- name: Provision VM in VMware and Register/Manage with Satellite
+  hosts: localhost
+  connection: local # Keep this for running local tasks like vmware_guest
+  gather_facts: false
+
+  tasks:
+    - name: Deploy VM in VMware vCenter
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "NoaZoeWorld"
+        cluster: "lioworld"
+        name: "{{ vm_name }}"
+        folder: "/"
+        template: "(( vcenter_template ))"
+        state: poweredon
+        guest_id: "rhel9_64Guest"
+        disk:
+          - size_gb: 100 
+            type: thin
+            #datastore: "DATASTORE_SYNOLOGY001"
+            datastore: "(( vcenter_datacluster ))" 
+        hardware:
+          memory_mb: 6000
+          num_cpus: 1
+        networks:
+          - name: "{{ vm_network_name }}"
+            ip: "{{ vm_ip }}"
+            netmask: "{{ vm_netmask }}"
+            gateway: "{{ vm_gateway }}"
+        customization:
+          dns_servers:
+          - 192.168.0.107
+          - 1.1.1.1 
+          domain: theesway.org
+          password: "redhat"
+          hostname: "{{ vm_name }}" 
+        wait_for_ip_address: true
+        wait_for_customization: true
+        validate_certs: false
+      register: vmware_guest_result
+
+    - name: Wait for SSH service to be available on the deployed VM
+      ansible.builtin.wait_for:
+        host: "{{ vm_ip }}"
+        port: 22
+        timeout: 300 # Give it some time to boot and SSH daemon to start
+        state: started
+      delegate_to: localhost # This task runs on the Ansible control node
