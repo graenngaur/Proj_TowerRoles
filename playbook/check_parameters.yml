@@ -1,0 +1,37 @@
+---
+- name: Verify IP address matches FQDN
+  hosts: localhost
+  gather_facts: no
+  vars:
+    # Input variables - customize these
+    target_ip: "192.168.0.12"
+    input_hostname: "rhel8anstools.theesway.org"
+    gb_input: 124
+    memory_input: 24
+    input_type: gold
+
+  tasks:
+    - name: Resolve FQDN to IP address
+      ansible.builtin.set_fact:
+        current_vm_list: "{{ ([input_hostname] if input_type != 'gold' else [input_hostname, input_hostname | replace('l8', 'l9')]) | list }}"
+        resolved_ip: "{{ lookup('dig', input_hostname) }}"
+        lp2_resolved_ip: "{{ lookup('dig', input_hostname | replace('l8', 'l9')) if input_type == 'gold' else omit }}"
+
+    - name: Check if IP matches FQDN
+      ansible.builtin.assert:
+        that:
+          - resolved_ip == target_ip
+          - gb_input is regex('^[0-9]+$') and memory_input is regex('^[0-9]+$')
+          - memory_input | int <= 64
+        success_msg: "✅ SUCCESS: IP {{ target_ip }} correctly resolves to {{ input_hostname }}"
+        fail_msg: "❌ FAILURE: IP {{ target_ip }} does not match {{ input_hostname }} (resolves to {{ resolved_ip }})"
+      register: ip_check_result
+
+    - name: Set verification status
+      ansible.builtin.set_fact:
+        converted_mb: "{{ (gb_input | int) * 1024 }}"
+
+    - name: "Show created entries"
+      ansible.builtin.debug:
+        msg: "  → {{ item }}"
+      loop: "{{ current_vm_list }}"
