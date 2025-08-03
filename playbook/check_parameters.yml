@@ -23,6 +23,7 @@
           - resolved_ip == target_ip
           - gb_input is regex('^[0-9]+$') and memory_input is regex('^[0-9]+$')
           - memory_input | int <= 64
+          #- (input_type == "gold") and ("l8" in input_hostname)
         success_msg: "✅ SUCCESS: IP {{ target_ip }} correctly resolves to {{ input_hostname }}"
         fail_msg: "❌ FAILURE: IP {{ target_ip }} does not match {{ input_hostname }} (resolves to {{ resolved_ip }})"
       register: ip_check_result
