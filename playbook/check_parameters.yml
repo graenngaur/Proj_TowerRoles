@@ -42,8 +42,8 @@
   gather_facts: true
 
 - name: Display host patching information  
-      ansible.builtin.debug:
-        msg:
-          - "Host: {{ inventory_hostname }}" 
+  ansible.builtin.debug:
+    msg:
+      - "Host: {{ inventory_hostname }}" 
 
     
