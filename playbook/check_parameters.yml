@@ -36,3 +36,14 @@
       ansible.builtin.debug:
         msg: "  → {{ item }}"
       loop: "{{ current_vm_list }}"
+
+- name: testing inventory
+  hosts: osinventory
+  gather_facts: true
+
+- name: Display host patching information  
+      ansible.builtin.debug:
+        msg:
+          - "Host: {{ inventory_hostname }}" 
+
+    
