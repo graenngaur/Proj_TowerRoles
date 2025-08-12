@@ -1,5 +1,5 @@
----
-- name: Verify IP address matches FQDN
+# Play 1: Validate inputs on the control node
+- name: Verify IP address and other inputs
   hosts: localhost
   gather_facts: no
   vars:
@@ -11,39 +11,51 @@
     input_type: gold
 
   tasks:
-    - name: Resolve FQDN to IP address
+    - name: Resolve FQDN(s) to IP addresses
       ansible.builtin.set_fact:
-        current_vm_list: "{{ ([input_hostname] if input_type != 'gold' else [input_hostname, input_hostname | replace('l8', 'l9')]) | list }}"
+        # Create a list of one or two hostnames based on the input type.
+        # The '| list' filter is not needed as [...] already creates a list.
+        current_vm_list: "{{ [input_hostname] if input_type != 'gold' else [input_hostname, input_hostname | replace('l8', 'l9')] }}"
         resolved_ip: "{{ lookup('dig', input_hostname) }}"
+        # Only resolve the second hostname if the type is 'gold'
         lp2_resolved_ip: "{{ lookup('dig', input_hostname | replace('l8', 'l9')) if input_type == 'gold' else omit }}"
 
-    - name: Check if IP matches FQDN
+    - name: Check if all inputs are valid
       ansible.builtin.assert:
         that:
           - resolved_ip == target_ip
-          - gb_input is regex('^[0-9]+$') and memory_input is regex('^[0-9]+$')
-          - memory_input | int <= 64
-          #- (input_type == "gold") and ("l8" in input_hostname)
-        success_msg: "✅ SUCCESS: IP {{ target_ip }} correctly resolves to {{ input_hostname }}"
+          # CORRECTED: Use 'is number' for integer types for better type safety.
+          - gb_input is number
+          - memory_input is number
+          - memory_input <= 64
+          # This commented-out check is a good example of business logic validation.
+          # - (input_type == "gold") and ("l8" in input_hostname)
+        success_msg: "✅ SUCCESS: IP {{ target_ip }} correctly resolves to {{ input_hostname }} and inputs are valid."
         fail_msg: "❌ FAILURE: IP {{ target_ip }} does not match {{ input_hostname }} (resolves to {{ resolved_ip }})"
-      register: ip_check_result
+      # The 'register' here is not strictly necessary unless you handle the failure in a later step.
+      # Assert will halt the play on failure by default.
+      # register: ip_check_result
 
-    - name: Set verification status
+    - name: Calculate memory in MB
+      # RENAMED: Task name is now more descriptive of its action.
       ansible.builtin.set_fact:
         converted_mb: "{{ (gb_input | int) * 1024 }}"
 
-    - name: "Show created entries"
+    - name: Show created host entries
       ansible.builtin.debug:
-        msg: "  → {{ item }}"
+        msg: "→ {{ item }}"
       loop: "{{ current_vm_list }}"
 
-- name: testing inventory
+# Play 2: Run tasks on the inventory group
+# CORRECTED: This play now has a valid structure with a 'tasks' block.
+- name: Testing on remote inventory hosts
   hosts: osinventory
   gather_facts: true
-
-- name: Display host patching information  
-  ansible.builtin.debug:
-    msg:
-      - "Host: {{ inventory_hostname }}" 
-
-    
+  tasks:
+    # MOVED: This task was incorrectly formatted as a new play.
+    # It is now correctly indented under the 'tasks' section of this play.
+    - name: Display host information
+      ansible.builtin.debug:
+        msg:
+          - "Host: {{ inventory_hostname }}"
+          - "Distribution: {{ ansible_distribution }} {{ ansible_distribution_version }}"
