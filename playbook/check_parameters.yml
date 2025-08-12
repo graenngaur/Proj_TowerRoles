@@ -49,7 +49,7 @@
 # Play 2: Run tasks on the inventory group
 # CORRECTED: This play now has a valid structure with a 'tasks' block.
 - name: Testing on remote inventory hosts
-  hosts: osinventory
+  hosts: "{{ osinventory }}"
   gather_facts: true
   tasks:
     # MOVED: This task was incorrectly formatted as a new play.
