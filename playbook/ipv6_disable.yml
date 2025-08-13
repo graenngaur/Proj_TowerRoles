@@ -1,37 +1,30 @@
-
 ---
-- name: Selectively disable IPv6 on Red Hat systems using nmcli
+- name: Disable IPv6 on active interfaces using nmcli
   hosts: all
-  become: yes
+  become: true
   tasks:
-    - name: Get list of active connections with IPv6 enabled
-      shell: |
-        nmcli -t -f NAME,IP6 connection show --active | grep -v ':$' | cut -d':' -f1
-      register: ipv6_active_connections
+    - name: Get a list of active network interfaces
+      command: nmcli -t -f device,state dev
+      register: active_interfaces_output
       changed_when: false
-      failed_when: false
 
-    - name: Disable IPv6 for connections with active IPv6
-      command: nmcli connection modify "{{ item }}" ipv6.method ignore
-      loop: "{{ ipv6_active_connections.stdout_lines }}"
-      when: 
-        - ipv6_active_connections.stdout_lines is defined
-        - ipv6_active_connections.stdout_lines | length > 0
-      register: ipv6_changes
+    - name: Parse active interfaces
+      set_fact:
+        active_interfaces: "{{ active_interfaces_output.stdout_lines | select('search', 'connected') | map('regex_replace', '^(.*):.*', '\\1') | list }}"
 
-    - name: Restart NetworkManager only if changes were made
-      systemd:
-        name: NetworkManager
-        state: restarted
-      when: ipv6_changes is changed
-
-    - name: Verify IPv6 status for modified connections
-      command: nmcli -t -f NAME,IP6 connection show --active
-      register: final_ipv6_status
+    - name: Check if IPv6 is enabled on each active interface
+      command: nmcli -f ipv6.method dev show {{ item }}
+      register: ipv6_status
+      loop: "{{ active_interfaces }}"
       changed_when: false
-      when: ipv6_changes is changed
+      ignore_errors: true
 
-    - name: Display results
-      debug:
-        msg: "IPv6 disabled for {{ ipv6_changes.results | selectattr('changed') | list | length }} connections"
-      when: ipv6_changes is defined
+    - name: Disable IPv6 on interfaces where it is enabled
+      command: nmcli con mod {{ item.item }} ipv6.method ignore
+      loop: "{{ ipv6_status.results }}"
+      when: "'ipv6.method: auto' in item.stdout or 'ipv6.method: link-local' in item.stdout"
+      
+    - name: Restart the network connection to apply changes
+      command: nmcli con up {{ item.item }}
+      loop: "{{ ipv6_status.results }}"
+      when: "'ipv6.method: auto' in item.stdout or 'ipv6.method: link-local' in item.stdout"
