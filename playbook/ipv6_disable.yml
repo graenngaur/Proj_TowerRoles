@@ -1,0 +1,30 @@
+- name: Disable IPv6 on Red Hat systems using nmcli
+  hosts: all
+  become: yes
+  tasks:
+    - name: Get list of network connections
+      command: nmcli -t -f NAME connection show --active
+      register: active_connections
+      changed_when: false
+
+    - name: Disable IPv6 for each active connection
+      command: nmcli connection modify "{{ item }}" ipv6.method ignore
+      loop: "{{ active_connections.stdout_lines }}"
+      when: item != ""
+
+    - name: Reload network connections
+      command: nmcli connection reload
+
+    - name: Restart NetworkManager service
+      systemd:
+        name: NetworkManager
+        state: restarted
+
+    - name: Verify IPv6 is disabled
+      command: nmcli -t -f NAME,IP6 connection show --active
+      register: ipv6_status
+      changed_when: false
+
+    - name: Display IPv6 status
+      debug:
+        var: ipv6_status.stdout_lines
